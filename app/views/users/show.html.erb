@@ -1,2 +1,7 @@
-<h1>Users#show</h1>
-<p>Find me in app/views/users/show.html.erb</p>
+<%= avatar_for(current_user, size: 200) %>
+<h1> <% if @user.username %>
+	<%= @user.username %></h1>
+	<% end %>
+
+	
+

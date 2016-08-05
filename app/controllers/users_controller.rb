@@ -22,12 +22,12 @@ class UsersController < ApplicationController
 
   private
 
-  def set_listing
-    @listing = User.find(params[:id])
+  def set_user
+    @user = User.find(params[:id])
   end 
 
 	def user_params
-    params.require(:user).permit(:username, :password, :token, :IGC_total, :IGC_base)
+    params.require(:user).permit(:username, :password, :token, :IGC_total, :IGC_base, {avatars:[]})
   end
 
 end

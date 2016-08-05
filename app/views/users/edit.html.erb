@@ -5,13 +5,13 @@
    
 
       <%= f.label :username %>
-      <%= f.text_field :username, class: 'form-control' %>
+      <%= f.text_field :username, class: 'form-control', required: true %>
       <br>
       <%= f.label :email %>
-      <%= f.email_field :email, class: 'form-control' %>
+      <%= f.email_field :email, class: 'form-control', required: true %>
       <br>
       <%= f.label :password %>
-      <%= f.password_field :password, class: 'form-control' %>
+      <%= f.password_field :password, class: 'form-control', required: true %>
       <br>
       <%= f.label :photo %>
       <%= f.file_field :avatars, multiple: true %>
