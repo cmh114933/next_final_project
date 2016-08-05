@@ -1,7 +1,14 @@
 <%= avatar_for(current_user, size: 200) %>
-<h1> <% if @user.username %>
-	<%= @user.username %></h1>
+	<% if @user.username %>
+		<h1><%= @user.username %></h1>
 	<% end %>
+<h2>Total In Game Currency:
+	<% if @user.IGC_total %>
+		$<%= @user.IGC_total %>
+	<% else %>
+		$0
+	<% end %></h2>
 
-	
-
+	<% if @user.id == current_user.id%>
+      <a href='/users/<%=@user.id%>/edit'>Edit</a><br>
+  <% end %>
