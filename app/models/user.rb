@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
 
   validates :email, uniqueness: true
   has_many :authentications, :dependent => :destroy
+  has_many :players
+  has_many :games, through: :players
 
   mount_uploaders :avatars, AvatarUploader
 
