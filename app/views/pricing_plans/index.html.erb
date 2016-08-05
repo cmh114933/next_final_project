@@ -1,0 +1,10 @@
+<%= link_to "Home", root_path %>
+
+<h1>Buy Coin For Earn more in game!!</h1>
+
+
+<% @price.each do |p| %>
+	<%= p.price_of_coin %>
+	<%= p.value_of_coin %>
+	<%= link_to "Buy this Package", pricing_plan_path(p) %>
+<%end%>
