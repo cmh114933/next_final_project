@@ -1,2 +1,14 @@
-<h1>Users#show</h1>
-<p>Find me in app/views/users/show.html.erb</p>
+<%= avatar_for(current_user, size: 200) %>
+	<% if @user.username %>
+		<h1><%= @user.username %></h1>
+	<% end %>
+<h2>Total In Game Currency:
+	<% if @user.IGC_total %>
+		$<%= @user.IGC_total %>
+	<% else %>
+		$0
+	<% end %></h2>
+
+	<% if @user.id == current_user.id%>
+      <a href='/users/<%=@user.id%>/edit'>Edit</a><br>
+  <% end %>

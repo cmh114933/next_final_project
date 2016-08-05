@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   validates :email, uniqueness: true
   has_many :authentications, :dependent => :destroy
 
+  mount_uploaders :avatars, AvatarUploader
+
   def self.create_with_auth_and_hash(authentication,auth_hash)
     create! do |u|
       #u.first_name = auth_hash["info"]["first_name"]
@@ -19,5 +21,6 @@ class User < ActiveRecord::Base
     x = self.authentications.where(:provider => :facebook).first
     return x.token unless x.nil?
   end
+
 
 end
