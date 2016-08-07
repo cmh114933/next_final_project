@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
+  get 'pricing_plans/index'
+
   root 'welcome#index'
+
+resources :pricing_plans
+resources :payments, only: [:new, :create]
 
 #*** rails g clearance:routes show all these default Clearance routes
 resources :passwords, controller: "clearance/passwords", only: [:create, :new]

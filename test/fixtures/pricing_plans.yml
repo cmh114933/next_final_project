@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  price_of_coin: 1
+  value_of_coin: 1
+
+two:
+  price_of_coin: 1
+  value_of_coin: 1

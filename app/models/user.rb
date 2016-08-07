@@ -1,4 +1,8 @@
 class User < ActiveRecord::Base
+
+  has_many :pricing_plans
+  has_many :payments
+
   include Clearance::User
 
   validates :email, uniqueness: true

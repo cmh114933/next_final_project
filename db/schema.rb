@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160805024041) do
+ActiveRecord::Schema.define(version: 20160805044125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,78 @@ ActiveRecord::Schema.define(version: 20160805024041) do
     t.string   "provider"
     t.string   "token"
     t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "board_space_messages", force: :cascade do |t|
+    t.integer  "board_space_id"
+    t.integer  "message_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  create_table "board_spaces", force: :cascade do |t|
+    t.integer  "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.integer  "current_player_id"
+    t.string   "special_msg"
+    t.string   "status"
+    t.string   "user_prompt_question"
+    t.string   "user_prompt_type"
+    t.string   "events",               default: [],              array: true
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.string   "event"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "owned_stocks", force: :cascade do |t|
+    t.integer  "price"
+    t.integer  "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer  "transaction_id"
+    t.integer  "pricing_plan_id"
+    t.integer  "user_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  create_table "players", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "game_id"
+    t.integer  "position"
+    t.boolean  "in_jail"
+    t.integer  "igc_game"
+    t.integer  "reputation"
+    t.integer  "job"
+    t.string   "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "pricing_plans", force: :cascade do |t|
+    t.integer  "price_of_coin"
+    t.integer  "value_of_coin"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.integer  "price"
+    t.integer  "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
