@@ -3,6 +3,28 @@
 <head>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tag %>
+
+
+  <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCSLAEiu894zTv2s44ft2cWJgiRlS31icw",
+      authDomain: "finopoly-20dd4.firebaseapp.com",
+      databaseURL: "https://finopoly-20dd4.firebaseio.com",
+      storageBucket: "",
+    };
+    firebase.initializeApp(config);
+  </script>
+    <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+      <script>
+    var config = {
+      // ...
+    };
+    firebase.initializeApp(config);
+  </script>
 </head>
 <body>
   <div id="header">

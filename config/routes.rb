@@ -19,7 +19,7 @@ get "/sign_up" => "clearance/users#new", as: "sign_up"
 get "/auth/:provider/callback" => "sessions#create_from_omniauth"
 
 resources :users
-
+resources :game, only:[:create,:show]
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
