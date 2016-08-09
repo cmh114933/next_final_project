@@ -12,5 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require pubnub-3.15.2
 //= require turbolinks
 //= require_tree .

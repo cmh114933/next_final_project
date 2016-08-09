@@ -1,2 +1,20 @@
 <h1>Welcome#index</h1>
 <p>Find me in app/views/welcome/index.html.erb</p>
+
+<%= button_tag "Play Now", :id => "play"%> 
+
+
+
+<!-- User enters homepage
+User clicks Play Now
+- display waiting room modal popup
+- makes ajax request to server requesting for game id
+- use game id as channel name for pubnub subscription
+
+Once 3 players have joined the game, server publishes a message to pubnub channel, informing players they can start the game
+- on server side,
+- when receive play now request
+- find_or_initialize game
+- checks how many players already subscribed
+- updates current_user into game if not full
+- if full after subscribing the user, publish message to pubnub telling players they can start game -->
