@@ -1,0 +1,26 @@
+<%= form_for(@payment) do |f| %>
+
+    <%= f.hidden_field :pricing_plan_id, value:@pricing.id %><br>
+  <div class="field">
+    <div id="dropin"></div>
+  </div>
+  <div class="actions">
+    <%= f.submit value:"Pay now!!" %>
+  </div>
+
+<% end %>
+
+<script type="text/javascript">
+  function setupBT() {
+    braintree.setup("<%= @client_token %>", 'dropin', {
+      container: 'dropin'
+    });
+  }
+
+  if (window.addEventListener)
+    window.addEventListener("load", setupBT, false);
+  else if (window.attachEvent)
+    window.attachEvent("onload", setupBT);
+  else window.onload = setupBT;
+
+</script>

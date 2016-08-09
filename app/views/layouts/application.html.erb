@@ -1,11 +1,11 @@
 <!DOCTYPE html>
+<title>Finopoly</title>
 <html>
 <head>
   <%= include_gon %>
 
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tag %>
-
 
   <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
   <script>
@@ -31,6 +31,9 @@
 <script src='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.js'></script>
 
 <script src = "https://cdn.pubnub.com/pubnub-3.15.2.js"></script>
+
+  <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+
 </head>
 <body>
   <div id="header">
