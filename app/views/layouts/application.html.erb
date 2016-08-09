@@ -2,9 +2,38 @@
 <title>Finopoly</title>
 <html>
 <head>
+  <%= include_gon %>
+
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tag %>
+
+  <script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCSLAEiu894zTv2s44ft2cWJgiRlS31icw",
+      authDomain: "finopoly-20dd4.firebaseapp.com",
+      databaseURL: "https://finopoly-20dd4.firebaseio.com",
+      storageBucket: "",
+    };
+    firebase.initializeApp(config);
+  </script>
+    <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+  <!-- jQuery -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
+
+<!-- Firebase -->
+<script src='https://cdn.firebase.com/js/client/2.1.0/firebase.js'></script>
+
+<!-- Firechat -->
+<link rel='stylesheet' href='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.css' />
+<script src='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.js'></script>
+
+<script src = "https://cdn.pubnub.com/pubnub-3.15.2.js"></script>
+
   <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+
 </head>
 <body>
   <div id="header">

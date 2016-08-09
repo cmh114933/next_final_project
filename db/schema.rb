@@ -42,8 +42,8 @@ ActiveRecord::Schema.define(version: 20160805044125) do
     t.integer  "current_player_id"
     t.string   "special_msg"
     t.string   "status"
-    t.string   "user_prompt_question"
-    t.string   "user_prompt_type"
+    t.string   "user_prompt_question", default: ""
+    t.string   "user_prompt_type",     default: ""
     t.string   "events",               default: [],              array: true
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
