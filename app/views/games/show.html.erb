@@ -108,3 +108,198 @@
 			</table>
 		</div>
 </div>
+
+
+
+
+<h1>Test Game</h1>
+
+
+<div id = "whose_turn"></div>
+<button id = "dice" >Dice</button>
+
+
+
+
+<div>
+<div id="chatHistory" class="table-bordered chatHistory"></div>
+<div id="chatHistory" class="table-bordered chatHistory"></div>
+<input type="text" id="message" placeholder="Enter your message here" class="message"/>
+<%= button_tag "Send", :id => "sendButton"%> 
+</div>
+
+
+<button id = "test">Test</button>
+
+
+<br>
+1  <div id= "test_1">
+  <%@game.players.each do |p|%>
+<div id='player_<%="#{p.id}"%>'><%=p.user.email%></div>
+<%end%>
+</div>
+2  <div id= "test_2"></div>
+3  <div id= "test_3"></div>
+4  <div id= "test_4"></div>
+5  <div id= "test_5"></div>
+6  <div id= "test_6"></div>
+7  <div id= "test_7"></div>
+8  <div id= "test_8"></div>
+9  <div id= "test_9"></div>
+10 <div id= "test_10"></div>
+11 <div id= "test_11"></div>
+12 <div id= "test_12"></div>
+13 <div id= "test_13"></div>
+14 <div id= "test_14"></div>
+15 <div id= "test_15"></div>
+16 <div id= "test_16"></div>
+17 <div id= "test_17"></div>
+18 <div id= "test_18"></div>
+19 <div id= "test_19"></div>
+20 <div id= "test_20"></div>
+
+
+<%@game.stocks.each do |s|%>
+  <div id='stock_<%="#{s.id}"%>'>Stock ID:<%="#{s.id}"%>  
+    Company Name: <%=s.company_name%> 
+    Price: <span id= "s_price"><%=s.price%></span>   
+    Quantitiy: <span id = "s_quantity"><%=s.quantity%></span>
+    <% if s.company_name != "Apple" && s.company_name !="Mc Donalds" %>
+    <button class='transact'>Transact</button>
+    <%end%>
+    <%= content_tag(:div, nil, :id=> ('s_id'), data:{s_id: s.id}) %>
+  </div>
+ 
+
+<%end%>
+<br>
+
+
+<div class="modal fade" id="modal_news_ev" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header1</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="modal_occu_ev" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header2</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="modal_m_news_ev" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header3</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <div class="modal fade" id="modal_stock_ev" role="dialog">
+          <p id="s_id" hidden ></p>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header4</h4>
+        </div>
+        <div class="modal-body">
+          <p>Buy Stock</p>
+        </div>
+        <p>Quantity</p>
+        <input id='quantity'></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id = "finalize_buy">Buy</button>
+          <button type="button" class="btn btn-default" id = "finalize_sell">Sell</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+        <div class="modal fade" id="modal_global_ev" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header5</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+          <div class="modal fade" id="modal_exchange_ev" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header6</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+          <div class="modal fade" id="modal_evaluation_ev" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header7</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+>>>>>>> master

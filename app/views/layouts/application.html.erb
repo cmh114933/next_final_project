@@ -2,7 +2,7 @@
 <title>Finopoly</title>
 <html>
 <head>
-    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= content_for?(:title) ? yield(:title) : "My Application" %></title>
     <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "Learn Rails" %>">
@@ -14,6 +14,21 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <%= include_gon %>
+
+<!--   <%= javascript_include_tag 'application' %>
+  <%= csrf_meta_tag %>
+ -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+
+
+
+
+<script src = "https://cdn.pubnub.com/pubnub-3.15.2.js"></script>
+
+
 </head>
 <body>
   <div id="flash">

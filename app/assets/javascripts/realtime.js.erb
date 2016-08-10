@@ -1,0 +1,230 @@
+pubnub = PUBNUB({
+    publish_key : gon.publish_key,
+    subscribe_key : gon.subscribe_key,
+	origin        : 'pubsub.pubnub.com',
+	uuid : gon.user_email,
+	ssl           : true
+})
+
+$(document).ready(function(){
+	var turn_update = function(){$.ajax({
+		type: 'GET',
+		url : '/player_turn',
+		dataType: "JSON",
+		success: function(data){
+
+			$('#whose_turn').text(data.player_turn)
+				if($('#whose_turn').text() === "YOUR TURN"){
+					$('#dice').addClass("your_turn")
+					$('#dice').removeAttr('disabled')
+				}else{
+					$('#dice').removeClass("your_turn")
+					$('#dice').attr('disabled',true)
+				}
+		}
+	})
+	}
+
+	var player_position = function(){$.ajax({
+		type:'GET',
+		url :'/player_position',
+		dataType: "JSON",
+		success: function(data){
+			    setTimeout(function(){
+				pubnub.publish({
+					channel : 'games/' + gon.game_id + '/game_logic',
+					message : "player_init/"+data.my_player_position +'/' +data.player_id +'/' + data.player
+				})
+			}, 500)
+		}
+	})}
+
+	var event_trigger = function(series){$.ajax({
+		type: 'POST',
+		data: {"series":series},
+		url : '/event_trigger',
+		success: function(data){
+
+		}
+	})}
+
+	var stock_price_change = function(){$.ajax({
+		type: 'POST',
+		url : '/stock_price_change',
+		success: function(data){
+			
+		}
+	})}
+
+	player_position()
+	turn_update()
+
+  $('.transact').on("click",function(event){
+  		$('#modal_stock_ev p#s_id').text($(this).parent().children('#s_id').data('sId'))
+  		$('#modal_stock_ev').modal('show')
+  })
+
+  $('#finalize_buy').on("click",function(event){ 
+  		$.ajax({ 		
+			type:'POST',
+			data: {'s_id':$(this).closest("#modal_stock_ev").children('p').text(),'quantity':$('#quantity').val()},
+			url:'/buy_stocks',
+			success: function(data){
+				$('#modal_stock_ev').modal('hide')
+				pubnub.publish({
+				   	channel : 'games/' + gon.game_id + '/game_logic',
+				   	message : "stock_update/" + data.s_id +'/' +data.s_quantity
+				})
+
+
+			}
+		})
+	})
+
+  $('#finalize_sell').on("click",function(event){ 
+  		$.ajax({ 		
+			type:'POST',
+			data: {'s_id':$(this).closest("#modal_stock_ev").children('p').text(),'quantity':$('#quantity').val()},
+			url:'/sell_stocks',
+			success: function(data){
+				$('#modal_stock_ev').modal('hide')
+				pubnub.publish({
+				   	channel : 'games/' + gon.game_id + '/game_logic',
+				   	message : "stock_update/" + data.s_id +'/' +data.s_quantity
+				})
+
+
+			}
+		})
+	})
+
+  $('#play').on("click",function(event){
+
+	  $.ajax({
+		type: 'POST',
+	    url: "/games", 
+	    success: function(data){
+	    	if(data.status=== "READY"){
+		    	pubnub.publish({		    		
+		    		channel : 'game_start',
+		    		message : "game_start/" + data.game_id
+		    	})
+	    	}else{
+		    	pubnub.publish({		    		
+		    		channel : 'game_start',
+		    		message : "game_init_wait"
+		    	})	    		
+	    	}
+
+	    }
+	  })
+  })
+
+	pubnub.subscribe({
+	    channel : 'game_start',
+   	    callback : function(message) { 
+   	    		if(message.split("/")[0] === "game_start"){
+   	    			alert("Game will start in 5 seconds")
+			        setTimeout(function(){
+			          window.location.href = "/games/" + message.split("/")[1]
+			        }, 5000)
+			        
+   	    		}else{
+   	    			alert("Waiting for players. Please wait patiently")
+   	    		}
+
+		      	}
+	})
+
+
+	$('#dice').on("click",function(event){
+		$.ajax({
+			type: 'POST',
+			url: "/dice",
+			success: function(data){
+				$.ajax({
+					type: 'POST',
+					url: "/event_check",
+					success: function(data){
+						event_trigger(data.e_series)
+						var e_id = (data.e_type.split(" "))
+
+						$('.modal-body p').text(data.event)
+						$.each(e_id,function(index,value){
+							$('#modal_'+value).modal('show')
+						})
+
+						pubnub.publish({
+				    		channel : 'games/' + gon.game_id + '/game_logic',
+				    		message : "d_roll/" + data.position
+				    	})
+
+					}
+				})
+
+	    		//actions before next turn
+
+			}
+		})
+	})
+
+			// 	}).done(function(data){
+			// 		debugger
+			// 		var e_id = (data.e_type.split(" "))
+
+			// 		$('.modal-body p').text(data.event)
+			// 		$.each(e_id,function(index,value){
+			// 			$('#modal_'+value).modal('show')
+			// 		})
+
+			// 	})
+			// 			debugger
+	  //   		//actions before next turn
+		 //    	pubnub.publish({
+		 //    		channel : 'games/' + gon.game_id + '/game_logic',
+		 //    		message : "d_roll/" + data.position
+		 //    	})
+			// }
+    pubnub.subscribe({
+	    channel : 'games/' + gon.game_id + '/game_logic',
+	    callback : function(message) { 
+	    	if(message === "test"){
+				$('#test').append("<p>success</p>")
+	    	}
+	    	else if (message.split("/")[0] === "d_roll"){
+
+	    		player_position()
+
+
+
+	    		turn_update()
+
+	    	}
+	    	else if (message.split("/")[0] === 'player_init'){
+
+	    		$('#test_'+message.split("/")[1]).append($('#player_'+message.split("/")[2]))
+	    		
+	    	}
+	    	else if(message.split("/")[0] === 'stock_update'){
+	    		$('#stock_'+ message.split("/")[1]+ ' #s_quantity').text(message.split("/")[2])
+	    	}
+		}
+	})
+
+
+
+    $('#test').click(function(e){
+    	pubnub.publish({
+    		channel : 'games/' + gon.game_id + '/game_logic',
+    		message : "test"
+    	})
+    })
+
+})
+
+// Activate event on click of submit, run ajax that changes events in game and stocks, set event triggers to cahnge stock price
+
+
+// set function var stock price to change all stock prices
+// set function var owned stocks to show all owned stocks
+// set function var total worth to show capital gain + value + cash out

@@ -26,7 +26,15 @@ get "/sign_up" => "clearance/users#new", as: "sign_up"
 get "/auth/:provider/callback" => "sessions#create_from_omniauth"
 
 resources :users
-
+resources :games, only:[:create,:show]
+post "/dice" => 'games#dice', as: 'dice'
+get "/player_turn" => 'games#player_turn', as: 'player_turn'
+post "/event_check" => 'games#event_check', as: 'event_check'
+get "/player_position" => 'games#player_position', as: 'playe_position'
+post "/buy_stocks" => 'games#buy_stocks', as: 'buy_stocks'
+post "/sell_stocks" => 'games#sell_stocks', as: 'sell_stocks'
+post "/event_trigger" => 'games#event_trigger', as: 'event_trigger'
+post "/stock_price_change" => 'games#stock_price_change', as: 'stock_price_change'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

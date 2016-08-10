@@ -1,0 +1,28 @@
+pubnub = PUBNUB({
+    publish_key : gon.publish_key,
+    subscribe_key : gon.subscribe_key,
+	origin        : 'pubsub.pubnub.com',
+	uuid : gon.user_email,
+	ssl           : true
+})
+
+$(document).ready(function(){
+
+    pubnub.subscribe({
+	    channel : 'games/' + gon.game_id	,
+	    callback : function(message) { 
+			$('#chatHistory')[0].innerHTML = message + '<br/>' + $('#chatHistory')[0].innerHTML; 
+		}
+	})
+
+	$('#sendButton').click(function(e) { 
+		pubnub.publish({
+			channel : 'games/' + gon.game_id, 
+			message : pubnub.get_uuid() + ' : '  + $('#message').val()
+		});
+		$('#message').val('');
+	});
+	
+})
+
+

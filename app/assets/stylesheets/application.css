@@ -15,6 +15,7 @@
  *= require_tree ../../../vendor/assets/stylesheets/
  */
 
+
 .column {
 	text-align: center;
 	display: inline-block;
