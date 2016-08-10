@@ -1,4 +1,6 @@
 class GamesController < ApplicationController
+
+	def show
 	skip_before_action :verify_authenticity_token
 
 	def create
@@ -290,10 +292,11 @@ class GamesController < ApplicationController
 		end
 		st_mkt.update(price:st_mkt*percentage)
 		my_st.update(price:my_st*percentage)
+
 	end
 end
 
 
 # 100.times{Dice.create(roll:rand(1..6))}
 # 20.times{|x|BoardSpace.create(position:x+1)}
-[["NE1", "1"], ["OE1", "1"], ["NE2", "1"], ["OE2", "0"], ["MNE1", "0"], ["MNE2", "0"], ["SE1", "0"], ["MNE3", "0"], ["MNE4", "0"], ["MNE5", "0"], ["NE3", "0"], ["MNE6", "0"], ["SE2", "0"], ["MNE7", "0"], ["GE1", "0"], ["NE4", "0"], ["GE2", "0"]]
+# [["NE1", "1"], ["OE1", "1"], ["NE2", "1"], ["OE2", "0"], ["MNE1", "0"], ["MNE2", "0"], ["SE1", "0"], ["MNE3", "0"], ["MNE4", "0"], ["MNE5", "0"], ["NE3", "0"], ["MNE6", "0"], ["SE2", "0"], ["MNE7", "0"], ["GE1", "0"], ["NE4", "0"], ["GE2", "0"]]

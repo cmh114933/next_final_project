@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'games/show'
+
   get 'pricing_plans/index'
 
   root 'welcome#index'

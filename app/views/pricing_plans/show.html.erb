@@ -1,6 +1,6 @@
 <%= form_for(@payment) do |f| %>
-
-    <%= f.hidden_field :pricing_plan_id, value:@pricing.id %><br>
+  <%= f.hidden_field :pricing_plan_id, value:@pricing.id %><br>
+  
   <div class="field">
     <div id="dropin"></div>
   </div>
@@ -9,6 +9,7 @@
   </div>
 
 <% end %>
+
 
 <script type="text/javascript">
   function setupBT() {

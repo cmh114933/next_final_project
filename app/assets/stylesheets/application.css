@@ -12,5 +12,65 @@
  *
  *= require_tree .
  *= require_self
+ *= require_tree ../../../vendor/assets/stylesheets/
  */
 
+
+.column {
+	text-align: center;
+	display: inline-block;
+	width: 350px;
+    height: 250px;
+    margin: 10px;
+    border: 3px solid black
+}
+
+.left-table {
+	width:200px;
+	height:40px;
+	text-align:center;
+	border:solid;
+}
+
+.user_pic {
+	float:right;
+}
+
+.stock {
+	width:200px;
+	height:400px;
+	border:solid;
+	text-align:center
+}
+
+.right-table {
+	width:200px;
+	height:40px;
+	text-align:center;
+	border:solid;
+}
+
+.player_board {
+	margin:50px 0 0 10px;
+}
+
+.player_board tr th{
+	vertical-align: middle;
+	border:solid black;
+}
+
+.left {
+	margin-top:7px;
+	position:relative;
+  width:450px;
+  text-align:center;
+  padding-left:10px;
+}
+
+.right {
+	margin-top:7px;
+	position:relative;
+	width: 450px;
+	text-align:center;
+	padding-right:10px;
+}​
