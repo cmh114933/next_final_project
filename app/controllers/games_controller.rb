@@ -75,9 +75,23 @@ class GamesController < ApplicationController
 			20.times{|x|BoardSpace.create(position:x+1)}
 		end
 		if Message.all.empty?
+			temp_events = []
 			ev_arr.each do |x|
+				
+			
+				x[2].split(" ").each do |e|
+					temp_events << Array(e) if e != ""
+				end
+				temp_events.uniq!
+
+
 				BoardSpace.find_by(position:x[0]).messages.create(event:x[3],event_type:x[1],series:x[2])
 			end
+				temp_events.each do |a|
+					a << 0
+				end
+				@game.events = temp_events
+				@game.save
 		end
 		if Stock.all.empty?
 			stock_arr.each do |x|
@@ -195,8 +209,91 @@ class GamesController < ApplicationController
 		stock_b.update(quantity:stock_b.quantity+params[:quantity].to_i)
 		render json: {s_quantity:stock_b.quantity,s_id:stock_b.id}
 	end
+
+	def event_trigger
+		game_id = request.referrer.split("/").last
+		@game= Game.find(game_id)
+		new_events = []
+		@game.events.each do |x|
+			params[:series].split(" ").each do |e|
+				res= x
+				res[1]=(res[1].to_i+1).to_s if x[0] == e
+				new_events << res			
+			end
+		end
+
+		@game.update(events:new_events)
+		render json: {id:@game.id}
+	end
+
+	def stock_price_change
+		game_id = request.referrer.split("/").last
+		@game= Game.find(game_id)
+		current_player= Player.find(@game.current_player_id)
+		@game.events.each do |x|
+			if x[0] == 'NE1'
+				if x[1] == 1
+					st_mkt= @game.stocks.find_by(company_name:'Ship')
+					my_st =current_player.owned_stocks.find_by(company_name:'Ship')
+					percentage=130%
+				end
+			# elsif x[0] == 'OE1'
+			elsif x[0] == 'NE2'
+				if x[1] == 1
+					st_mkt= @game.stocks.find_by(company_name:'Mine')
+					my_st =current_player.owned_stocks.find_by(company_name:'Mine')
+					percentage=200%
+				end				
+			# elsif x[0] == 'OE2'
+			elsif x[0] == 'MNE1'
+				if x[1] >= 1
+				end				
+			elsif x[0] == 'MNE2'
+				if x[1] >= 1
+				end			
+			# elsif x[0] == 'SE1'
+			elsif x[0] == 'MNE3'
+				if x[1] >= 1
+				end			
+			elsif x[0] == 'MNE4'
+				if x[1] >= 1
+				end			
+			elsif x[0] == 'MNE5'
+				if x[1] >= 1
+				end			
+			elsif x[0] == 'NE3'
+				if x[1] == 1
+					st_mkt= @game.stocks.find_by(company_name:'Construct')
+					my_st =current_player.owned_stocks.find_by(company_name:'Construct')
+					percentage=60%
+				end
+			elsif x[0] == 'MNE6'
+				if x[1] >= 1
+				end			
+			# elsif x[0] == 'SE2'
+			elsif x[0] == 'MNE7'
+				if x[1] >= 1
+				end			
+			elsif x[0] == 'GE1'
+				if x[1] >= 2
+
+				end			
+			elsif x[0] == 'NE4'
+				if x[1] == 1
+					st_mkt= @game.stocks.find_by(company_name:'Construct')
+					my_st =current_player.owned_stocks.find_by(company_name:'Construct')
+					percentage=200%
+				end
+			elsif x[0] == 'GE2'
+				if x[1] == 1
+				end
+		end
+		st_mkt.update(price:st_mkt*percentage)
+		my_st.update(price:my_st*percentage)
+	end
 end
 
 
 # 100.times{Dice.create(roll:rand(1..6))}
 # 20.times{|x|BoardSpace.create(position:x+1)}
+[["NE1", "1"], ["OE1", "1"], ["NE2", "1"], ["OE2", "0"], ["MNE1", "0"], ["MNE2", "0"], ["SE1", "0"], ["MNE3", "0"], ["MNE4", "0"], ["MNE5", "0"], ["NE3", "0"], ["MNE6", "0"], ["SE2", "0"], ["MNE7", "0"], ["GE1", "0"], ["NE4", "0"], ["GE2", "0"]]

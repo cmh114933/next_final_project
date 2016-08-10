@@ -31,6 +31,8 @@ post "/event_check" => 'games#event_check', as: 'event_check'
 get "/player_position" => 'games#player_position', as: 'playe_position'
 post "/buy_stocks" => 'games#buy_stocks', as: 'buy_stocks'
 post "/sell_stocks" => 'games#sell_stocks', as: 'sell_stocks'
+post "/event_trigger" => 'games#event_trigger', as: 'event_trigger'
+post "/stock_price_change" => 'games#stock_price_change', as: 'stock_price_change'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

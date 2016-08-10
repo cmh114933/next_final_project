@@ -17,11 +17,13 @@
 
 <button id = "test">Test</button>
 
-<%@game.players.each do |p|%>
+
+<br>
+1  <div id= "test_1">
+  <%@game.players.each do |p|%>
 <div id='player_<%="#{p.id}"%>'><%=p.user.email%></div>
 <%end%>
-<br>
-1  <div id= "test_1"></div>
+</div>
 2  <div id= "test_2"></div>
 3  <div id= "test_3"></div>
 4  <div id= "test_4"></div>
