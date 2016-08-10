@@ -1,18 +1,18 @@
 class GamesController < ApplicationController
 
-	def show
 	skip_before_action :verify_authenticity_token
 
+
 	def create
-
-
+		gon.publish_key = ENV['PUBNUB_PUBLISH_KEY']
+		gon.subscribe_key = ENV['PUBNUB_SUBSCRIBE_KEY']
 		if Game.where(status: "PENDING").empty?
 			@game=Game.create(status: "PENDING")
 		else
 			@game=Game.find_by_status("PENDING")
 		end		
 		@player = Player.create(user_id: current_user.id, game_id: @game.id)
-		@game.update(status:"READY")if Player.where(game_id:@game.id).count == 3
+		@game.update(status:"READY") if Player.where(game_id:@game.id).count == 3
 		render json: { status: @game.status, game_id:@game.id}
 	end
 
@@ -56,6 +56,7 @@ class GamesController < ApplicationController
 			[1,"evaluation_ev","","Special evaluation"],
 			[1,"evaluation_ev","","Special evaluation"]
 		]
+
 		stock_arr=[
 			['Agri',1,80000,"Agriculture"],
 			['Ship',2,70000,"Shipping"],
@@ -73,28 +74,29 @@ class GamesController < ApplicationController
 				Dice.create(roll:x)
 			end
 		end
+
 		if BoardSpace.all.empty?
 			20.times{|x|BoardSpace.create(position:x+1)}
 		end
+
 		if Message.all.empty?
 			temp_events = []
 			ev_arr.each do |x|
-				
-			
 				x[2].split(" ").each do |e|
 					temp_events << Array(e) if e != ""
 				end
 				temp_events.uniq!
-
-
 				BoardSpace.find_by(position:x[0]).messages.create(event:x[3],event_type:x[1],series:x[2])
 			end
-				temp_events.each do |a|
-					a << 0
-				end
-				@game.events = temp_events
-				@game.save
+
+			temp_events.each do |a|
+				a << 0
+			end
+
+			@game.events = temp_events
+			@game.save
 		end
+
 		if Stock.all.empty?
 			stock_arr.each do |x|
 				@game.stocks.create(company_name:x[0],price:x[1],quantity:x[2],s_type:x[3])
@@ -107,6 +109,7 @@ class GamesController < ApplicationController
 				end
 			end
 		end
+
 		Message.all.each do |x|
 			x.update(times_called:0)
 		end
@@ -162,6 +165,7 @@ class GamesController < ApplicationController
 		end
 		prompt.update(times_called:prompt.times_called+1)
 		total_times_called = 0
+
 		Message.all.each do |x|
 			total_times_called = total_times_called + x.times_called
 		end
@@ -171,6 +175,7 @@ class GamesController < ApplicationController
 				x.update(times_called:0)
 			end
 		end
+
 		if @game.current_player_id == @game.players.last.id
 			id_update = @game.players.first.id
 		else
@@ -178,7 +183,6 @@ class GamesController < ApplicationController
 		end
 		@game.update(current_player_id:id_update)
 		render json: {event: prompt.event,e_type: prompt.event_type,e_series:prompt.series}
-
 	end
 
 	def player_position
@@ -223,7 +227,6 @@ class GamesController < ApplicationController
 				new_events << res			
 			end
 		end
-
 		@game.update(events:new_events)
 		render json: {id:@game.id}
 	end
@@ -233,62 +236,63 @@ class GamesController < ApplicationController
 		@game= Game.find(game_id)
 		current_player= Player.find(@game.current_player_id)
 		@game.events.each do |x|
-			if x[0] == 'NE1'
-				if x[1] == 1
-					st_mkt= @game.stocks.find_by(company_name:'Ship')
-					my_st =current_player.owned_stocks.find_by(company_name:'Ship')
-					percentage=130%
-				end
-			# elsif x[0] == 'OE1'
-			elsif x[0] == 'NE2'
-				if x[1] == 1
-					st_mkt= @game.stocks.find_by(company_name:'Mine')
-					my_st =current_player.owned_stocks.find_by(company_name:'Mine')
-					percentage=200%
-				end				
-			# elsif x[0] == 'OE2'
-			elsif x[0] == 'MNE1'
-				if x[1] >= 1
-				end				
-			elsif x[0] == 'MNE2'
-				if x[1] >= 1
-				end			
-			# elsif x[0] == 'SE1'
-			elsif x[0] == 'MNE3'
-				if x[1] >= 1
-				end			
-			elsif x[0] == 'MNE4'
-				if x[1] >= 1
-				end			
-			elsif x[0] == 'MNE5'
-				if x[1] >= 1
-				end			
-			elsif x[0] == 'NE3'
-				if x[1] == 1
-					st_mkt= @game.stocks.find_by(company_name:'Construct')
-					my_st =current_player.owned_stocks.find_by(company_name:'Construct')
-					percentage=60%
-				end
-			elsif x[0] == 'MNE6'
-				if x[1] >= 1
-				end			
-			# elsif x[0] == 'SE2'
-			elsif x[0] == 'MNE7'
-				if x[1] >= 1
-				end			
-			elsif x[0] == 'GE1'
-				if x[1] >= 2
+		# 	if x[0] == 'NE1'
+		# 		if x[1] == 1
+		# 			st_mkt= @game.stocks.find_by(company_name:'Ship')
+		# 			my_st =current_player.owned_stocks.find_by(company_name:'Ship')
+		# 			percentage=130%
+		# 		end
+		# 	# elsif x[0] == 'OE1'
+		# 	elsif x[0] == 'NE2'
+		# 		if x[1] == 1
+		# 			st_mkt= @game.stocks.find_by(company_name:'Mine')
+		# 			my_st =current_player.owned_stocks.find_by(company_name:'Mine')
+		# 			percentage=200%
+		# 		end				
+		# 	# elsif x[0] == 'OE2'
+		# 	elsif x[0] == 'MNE1'
+		# 		if x[1] >= 1
+		# 		end				
+		# 	elsif x[0] == 'MNE2'
+		# 		if x[1] >= 1
+		# 		end			
+		# 	# elsif x[0] == 'SE1'
+		# 	elsif x[0] == 'MNE3'
+		# 		if x[1] >= 1
+		# 		end			
+		# 	elsif x[0] == 'MNE4'
+		# 		if x[1] >= 1
+		# 		end			
+		# 	elsif x[0] == 'MNE5'
+		# 		if x[1] >= 1
+		# 		end			
+		# 	elsif x[0] == 'NE3'
+		# 		if x[1] == 1
+		# 			st_mkt= @game.stocks.find_by(company_name:'Construct')
+		# 			my_st =current_player.owned_stocks.find_by(company_name:'Construct')
+		# 			percentage=60%
+		# 		end
+		# 	elsif x[0] == 'MNE6'
+		# 		if x[1] >= 1
+		# 		end			
+		# 	# elsif x[0] == 'SE2'
+		# 	elsif x[0] == 'MNE7'
+		# 		if x[1] >= 1
+		# 		end			
+		# 	elsif x[0] == 'GE1'
+		# 		if x[1] >= 2
 
-				end			
-			elsif x[0] == 'NE4'
-				if x[1] == 1
-					st_mkt= @game.stocks.find_by(company_name:'Construct')
-					my_st =current_player.owned_stocks.find_by(company_name:'Construct')
-					percentage=200%
-				end
-			elsif x[0] == 'GE2'
-				if x[1] == 1
-				end
+		# 		end			
+		# 	elsif x[0] == 'NE4'
+		# 		if x[1] == 1
+		# 			st_mkt= @game.stocks.find_by(company_name:'Construct')
+		# 			my_st =current_player.owned_stocks.find_by(company_name:'Construct')
+		# 			percentage=200%
+		# 		end
+		# 	elsif x[0] == 'GE2'
+		# 		if x[1] == 1
+		# 		end
+		# 	end
 		end
 		st_mkt.update(price:st_mkt*percentage)
 		my_st.update(price:my_st*percentage)
