@@ -1,6 +1,7 @@
 class CreateGames < ActiveRecord::Migration
   def change
     create_table :games do |t|
+      t.integer :number_of_turns, default: 0
       t.integer :current_player_id
       t.string :special_msg
       t.string :status
