@@ -141,10 +141,12 @@ $(document).ready(function(){
 			type: 'POST',
 			url: "/dice",
 			success: function(data){
+				debugger
 				$.ajax({
 					type: 'POST',
 					url: "/event_check",
 					success: function(data){
+						debugger
 						event_trigger(data.e_series)
 						var e_id = (data.e_type.split(" "))
 
