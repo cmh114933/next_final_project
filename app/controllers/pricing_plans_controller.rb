@@ -8,7 +8,12 @@ class PricingPlansController < ApplicationController
 	end
 
 	def index
-		@price = PricingPlan.all		
+		@price = PricingPlan.all
+		@p1 = @price.find(1)
+		@p2 = @price.find(2)
+		@p3 = @price.find(3)
+		@p4 = @price.find(4)
+		@p5 = @price.find(5)
 	end
 
 private
