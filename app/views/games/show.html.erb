@@ -5,10 +5,12 @@
 			<table class="player_board">
 					<tr>
 						<th>
-							<div class="left">Player2</div>
+							<a style="float:left" href="#"><%= avatar_for(current_user, size: 40) %></a>
+							<div class="left"> Player2 [IGC base: bla bla] [Stock: bla bla] </div>
 						</th>
 						<th>
-							<div class="right">Player3</div>
+							<a style="float:left" href="#"><%= avatar_for(current_user, size: 40) %></a>
+							<div class="right"> Player3 [IGC base: 123] [Stock: 321] </div>
 						</th>
 					</tr>
 			</table>
@@ -17,6 +19,13 @@
 	</div>
 </div>
 		
+<div class='col-md-3'>
+		<h1 style="float:left"><%= current_user.username %></h1>
+	<div class="user_pic">
+		<a href="#"><%= avatar_for(current_user, size: 120) %></a>
+	</div>
+</div>
+
 <div class='col-md-9'>
 	<div class='row'>
 		<table border="6" cellspacing="0" cellpadding="6" style="text-align:center;font:normal 8pt/9pt arial;width:900px;height:600px;border-collapse:separate; background-color:#F0FFF0;">
@@ -84,10 +93,6 @@
 <div class='col-md-3'>
 		<div class="detail">
 			<table style="width:100%">
-				<tr>
-					<th class="left-table" align="center">Name: </th>
-					<td class="right-table" align="center"><%= current_user.username %></td>
-				</tr>
 				<tr>
 					<th class="left-table" align="center">Token: </th>
 					<td class="right-table" align="center"><%= current_user.token %></td>
