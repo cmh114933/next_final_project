@@ -3,7 +3,7 @@ class CreatePlayers < ActiveRecord::Migration
     create_table :players do |t|
       t.belongs_to :user
       t.belongs_to :game
-      t.integer :position
+      t.integer :position, default: 1
       t.boolean :in_jail
       t.integer :igc_game
       t.integer :reputation

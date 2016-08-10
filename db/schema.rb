@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160805044125) do
+ActiveRecord::Schema.define(version: 20160809023934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,7 +38,14 @@ ActiveRecord::Schema.define(version: 20160805044125) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "dices", force: :cascade do |t|
+    t.integer  "roll"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "games", force: :cascade do |t|
+    t.integer  "number_of_turns",      default: 0
     t.integer  "current_player_id"
     t.string   "special_msg"
     t.string   "status"
@@ -51,15 +58,21 @@ ActiveRecord::Schema.define(version: 20160805044125) do
 
   create_table "messages", force: :cascade do |t|
     t.string   "event"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "event_type"
+    t.string   "series"
+    t.integer  "times_called", default: 0
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   create_table "owned_stocks", force: :cascade do |t|
+    t.integer  "player_id"
+    t.string   "company_name"
     t.integer  "price"
     t.integer  "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "s_type"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "payments", force: :cascade do |t|
@@ -73,14 +86,14 @@ ActiveRecord::Schema.define(version: 20160805044125) do
   create_table "players", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "game_id"
-    t.integer  "position"
+    t.integer  "position",   default: 1
     t.boolean  "in_jail"
     t.integer  "igc_game"
     t.integer  "reputation"
     t.integer  "job"
     t.string   "token"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "pricing_plans", force: :cascade do |t|
@@ -91,10 +104,13 @@ ActiveRecord::Schema.define(version: 20160805044125) do
   end
 
   create_table "stocks", force: :cascade do |t|
+    t.integer  "game_id"
+    t.string   "company_name"
     t.integer  "price"
     t.integer  "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "s_type"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "users", force: :cascade do |t|
