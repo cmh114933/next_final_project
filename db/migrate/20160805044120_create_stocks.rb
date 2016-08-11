@@ -3,7 +3,7 @@ class CreateStocks < ActiveRecord::Migration
     create_table :stocks do |t|
       t.belongs_to :game
       t.string :company_name
-      t.integer :price
+      t.float :price
       t.integer :quantity
       t.string :s_type
       t.timestamps null: false

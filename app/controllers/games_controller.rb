@@ -11,7 +11,7 @@ class GamesController < ApplicationController
 		else
 			@game=Game.find_by_status("PENDING")
 		end		
-		@player = Player.create(user_id: current_user.id, game_id: @game.id)
+		@player = Player.create(user_id: current_user.id, game_id: @game.id,igc_game:3000)
 		@game.update(status:"READY") if Player.where(game_id:@game.id).count == 3
 		render json: { status: @game.status, game_id:@game.id}
 	end
@@ -195,26 +195,45 @@ class GamesController < ApplicationController
 	end
 
 	def buy_stocks
-
 		game_id = request.referrer.split("/").last
 		@game= Game.find(game_id)
 		current_player= Player.find(@game.current_player_id)
+		my_player= Player.where(user_id:current_user.id,game_id:game_id).last
 		stock_b = Stock.find(params[:s_id].to_i)	
-		my_stock = OwnedStock.find_by(company_name:stock_b.company_name)
-		my_stock.update(quantity:params[:quantity].to_i) 
+		
+		os_id= 0 
+		my_player.owned_stocks.each do |os| 
+			os_id=os.id if !os.company_name.match(stock_b.company_name).nil? 
+		end
+
+		my_stock = OwnedStock.find_by(id:os_id)
+		start_quan=my_stock.quantity
+		my_stock.update(quantity:my_stock.quantity+params[:quantity].to_i) 
 		stock_b.update(quantity:stock_b.quantity-params[:quantity].to_i)
-		render json: {s_quantity:stock_b.quantity,s_id:stock_b.id}
+		end_quan=my_stock.quantity
+		purchase=end_quan-start_quan
+		my_player.update(igc_game:current_player.igc_game-purchase*my_stock.price)
+		render json: {s_quantity:stock_b.quantity,s_id:stock_b.id,player:my_player.id,player_igc:my_player.igc_game}
 	end
 
 	def sell_stocks
 		game_id = request.referrer.split("/").last
 		@game= Game.find(game_id)
 		current_player= Player.find(@game.current_player_id)
+		my_player= Player.where(user_id:current_user.id,game_id:game_id).last
 		stock_b = Stock.find(params[:s_id].to_i)	
-		my_stock = OwnedStock.find_by(company_name:stock_b.company_name)
+		os_id= 0 
+		my_player.owned_stocks.each do |os| 
+			os_id=os.id if !os.company_name.match(stock_b.company_name).nil? 
+		end
+		my_stock = OwnedStock.find_by(id:os_id)
+		start_quan=my_stock.quantity
 		my_stock.update(quantity:my_stock.quantity-params[:quantity].to_i) 
 		stock_b.update(quantity:stock_b.quantity+params[:quantity].to_i)
-		render json: {s_quantity:stock_b.quantity,s_id:stock_b.id}
+		end_quan=my_stock.quantity
+		sale=start_quan-end_quan
+		my_player.update(igc_game:current_player.igc_game+sale*my_stock.price)
+		render json: {s_quantity:stock_b.quantity,s_id:stock_b.id,player:my_player.id,player_igc:my_player.igc_game}
 	end
 
 	def event_trigger
@@ -228,7 +247,7 @@ class GamesController < ApplicationController
 				new_events << res			
 			end
 		end
-		@game.update(events:new_events)
+		@game.update(events:new_events) if new_events != []
 		render json: {id:@game.id}
 	end
 
@@ -236,151 +255,170 @@ class GamesController < ApplicationController
 		game_id = request.referrer.split("/").last
 		@game= Game.find(game_id)
 		current_player= Player.find(@game.current_player_id)
-		@game.events.each do |x|
-			# if x[0] == 'NE1'
-			# 	if x[1] == 1
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Ship'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Ship'))
-			# 		percentage=1.3
-			# 	end
-			# # elsif x[0] == 'OE1'
-			# elsif x[0] == 'NE2'
-			# 	if x[1] == 1
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Mine'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
-			# 		percentage=1.5
-			# 	end				
-			# # elsif x[0] == 'OE2'
-			# elsif x[0] == 'MNE1'
-			# 	if x[1] == 3
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Ship')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Ship'))
-			# 		if x[2].nil?
-			# 			percentage=0.7 
-			# 		else
-			# 			percentage=1
-			# 		end
-			# 	elsif x[1] == 4
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Ship')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Ship'))
-			# 		percentage=0.3
-			# 	end				
-			# elsif x[0] == 'MNE2'
-			# 	if x[1] == 2
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Pharma'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Pharma'))
-			# 		percentage=5
-			# 	elsif x[1] == 3
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Pharma')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Pharma'))
-			# 		percentage=0.05
-			# 	end						
-			# # elsif x[0] == 'SE1'
-			# elsif x[0] == 'MNE3'
-			# 	if x[1] == 1
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Mine'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
-			# 		percentage=1.5
-			# 	elsif x[1] == 3
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Mine')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
-			# 		if x[2].nil?
-			# 			percentage=0.7 
-			# 		else
-			# 			percentage=1
-			# 		end
-			# 	elsif x[1] == 4
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Mine')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
-			# 		percentage=0.5
-			# 	elsif x[1] == 5
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Mine')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
-			# 		percentage=0.5
-			# 	end								
-			# elsif x[0] == 'MNE4'
-			# 	if x[1] == 1
-			# 		st_mkt=  Array(@game.stocks.find_by(company_name:'Construct'))
-			# 		my_st = Array(current_player.owned_stocks.find_by(company_name:'Construct'))
-			# 		percentage=1.2
-			# 	end			
-			# elsif x[0] == 'MNE5'
-			# 	if x[1] == 2
-			# 		st_mkt=  Array(@game.stocks.find_by(s_type:'Food & Beverages'))
-			# 		my_st = Array(current_player.owned_stocks.find_by(s_type:'Food & Beverages'))
-			# 		percentage=0.95
-			# 	elsif x[1] ==3
-			# 		st_mkt=  Array(@game.stocks.find_by(s_type:'Food & Beverages'))
-			# 		my_st = Array(current_player.owned_stocks.find_by(s_type:'Food & Beverages'))
-			# 		percentage=0.7
-			# 	elsif x[1] ==4
-			# 		st_mkt=  Array(@game.stocks.find_by(company_name:'Monsanto'))
-			# 		my_st = Array(current_player.owned_stocks.find_by(company_name:'Monsanto'))
-			# 		percentage=0.4
-			# 	end			
-			# elsif x[0] == 'NE3'
-			# 	if x[1] == 1
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Construct')) << @game.stocks.find_by(company_name:'Mine')
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Construct')) << current_player.owned_stocks.find_by(company_name:'Mine')
-			# 		percentage=0.6
-			# 	end
-			# elsif x[0] == 'MNE6'
-			# 	if x[1] == 1
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Apple'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Apple')) 
-			# 		percentage=3
-			# 	elsif x[1]==2
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Apple'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Apple')) 
-			# 		percentage=0.1
-			# 	elsif x[1]==3
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Apple'))
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Apple')) 
-			# 		percentage=0.5
-			# 	end			
-			# # elsif x[0] == 'SE2'
-			# elsif x[0] == 'MNE7'
-			# 	if x[1] == 1
-			# 		st_mkt=  Array(@game.stocks.find_by(company_name:'Mine'))<< @game.stocks.find_by(company_name:'Ship')
-			# 		my_st = Array(current_player.owned_stocks.find_by(company_name:'Mine'))<< current_player.owned_stocks.find_by(company_name:'Ship')
-			# 		percentage=1.5
-			# 	elsif x[1] == 4
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Electro')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Electro'))
-			# 		if x[2].nil?
-			# 			percentage=0.5 
-			# 		else
-			# 			percentage=1
-			# 		end
-			# 	elsif x[1] == 5
-			# 		st_mkt= Array(@game.stocks.find_by(company_name:'Electro')) 
-			# 		my_st =Array(current_player.owned_stocks.find_by(company_name:'Electro'))
-			# 		percentage=0.4
-			# 	end		
-			# elsif x[0] == 'GE1'
-			# 	if x[1] == 1
-			# 	elsif x[1] == 2
-			# 		@game.events.each{|e| e<< true if e[0] == "MNE1" || e[0] == "MNE3" ||  e[0] == "MNE7"}
-			# 		@game.save 
-			# 	end			
-			# elsif x[0] == 'NE4'
-			# 	if x[1] == 1
-			# 		st_mkt=  Array(@game.stocks.find_by(company_name:'Construct'))
-			# 		my_st = Array(current_player.owned_stocks.find_by(company_name:'Construct'))
-			# 		percentage=2
-			# 	end
-			# elsif x[0] == 'GE2'
-			# 	if x[1] == 1
-			# 		@game.stocks.find_by(company_name:'Monsanto').delete
-			# 		current_player.owned_stocks.find_by(company_name:'Monsanto').delete
-			# 		st_mkt =[]
-			# 		my_st=[]
-			# 	end
-			# end
-		end
-		st_mkt.each{|s|s.update(price:s.price*percentage)}
-		my_st.each{|s|s.update(price:s.price*percentage)}
 
+					my_st_price=[]
+					st_mkt_price=[]
+		@game.events.each do |x|
+			percentage = 1
+					st_mkt =[]
+					my_st=[]
+			
+			if x[0] == 'NE1'
+	
+				if x[1] == "1"
+					
+					st_mkt= Array(@game.stocks.find_by(company_name:'Ship'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Ship'))
+					percentage=1.1
+				end
+			# elsif x[0] == 'OE1'
+			elsif x[0] == 'NE2'
+				if x[1] == "1"
+
+					st_mkt= Array(@game.stocks.find_by(company_name:'Mine'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
+					percentage=1.2
+				end				
+			# elsif x[0] == 'OE2'
+			elsif x[0] == 'MNE1'
+				if x[1] == "3"
+	
+					st_mkt= Array(@game.stocks.find_by(company_name:'Ship')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Ship'))
+					if x[2].nil?
+						percentage=0.6 
+					else
+						percentage=1
+					end
+				elsif x[1] == "4"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Ship')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Ship'))
+					percentage=0.3
+				end				
+			elsif x[0] == 'MNE2'
+				if x[1] == "2"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Pharma'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Pharma'))
+					percentage=1.5
+				elsif x[1] == "3"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Pharma')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Pharma'))
+					percentage=0.25
+				end						
+			# elsif x[0] == 'SE1'
+			elsif x[0] == 'MNE3'
+				if x[1] == "1"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Mine'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
+					percentage=1.2
+				elsif x[1] == "3"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Mine')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
+					if x[2].nil?
+						percentage=0.8 
+					else
+						percentage=1
+					end
+				elsif x[1] == "4"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Mine')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
+					percentage=0.5
+				elsif x[1] == "5"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Mine')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Mine'))
+					percentage=0.5
+				end								
+			elsif x[0] == 'MNE4'
+				if x[1] == "1"
+					st_mkt=  Array(@game.stocks.find_by(company_name:'Construct'))
+					my_st = Array(current_player.owned_stocks.find_by(company_name:'Construct'))
+					percentage=1.1
+				end			
+			elsif x[0] == 'MNE5'
+				if x[1] == "2"
+					st_mkt=  Array(@game.stocks.find_by(s_type:'Food & Beverages'))
+					my_st = Array(current_player.owned_stocks.find_by(s_type:'Food & Beverages'))
+					percentage=0.95
+				elsif x[1] =="3"
+					st_mkt=  Array(@game.stocks.find_by(s_type:'Food & Beverages'))
+					my_st = Array(current_player.owned_stocks.find_by(s_type:'Food & Beverages'))
+					percentage=0.7
+				elsif x[1] =="4"
+					st_mkt=  Array(@game.stocks.find_by(company_name:'Monsanto'))
+					my_st = Array(current_player.owned_stocks.find_by(company_name:'Monsanto'))
+					percentage=0.4
+				end			
+			elsif x[0] == 'NE3'
+				if x[1] == "1"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Construct')) << @game.stocks.find_by(company_name:'Mine')
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Construct')) << current_player.owned_stocks.find_by(company_name:'Mine')
+					percentage=0.6
+				end
+			elsif x[0] == 'MNE6'
+				if x[1] == "1"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Apple'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Apple')) 
+					percentage=3
+				elsif x[1]=="2"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Apple'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Apple')) 
+					percentage=0.1
+				elsif x[1]=="3"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Apple'))
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Apple')) 
+					percentage=0.5
+				end			
+			# elsif x[0] == 'SE2'
+			elsif x[0] == 'MNE7'
+				if x[1] == "1"
+					st_mkt=  Array(@game.stocks.find_by(company_name:'Mine'))<< @game.stocks.find_by(company_name:'Ship')
+					my_st = Array(current_player.owned_stocks.find_by(company_name:'Mine'))<< current_player.owned_stocks.find_by(company_name:'Ship')
+					percentage=1.5
+				elsif x[1] == "4"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Electro')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Electro'))
+					if x[2].nil?
+						percentage=0.5 
+					else
+						percentage=1
+					end
+				elsif x[1] == "5"
+					st_mkt= Array(@game.stocks.find_by(company_name:'Electro')) 
+					my_st =Array(current_player.owned_stocks.find_by(company_name:'Electro'))
+					percentage=0.4
+				end		
+			elsif x[0] == 'GE1'
+				if x[1] == "2"
+					@game.events.each{|e| e<< true if e[0] == "MNE1" || e[0] == "MNE3" ||  e[0] == "MNE7"}
+					@game.save 
+				end			
+			elsif x[0] == 'NE4'
+				if x[1] == "1"
+					st_mkt=  Array(@game.stocks.find_by(company_name:'Construct'))
+					my_st = Array(current_player.owned_stocks.find_by(company_name:'Construct'))
+					percentage=2
+				end
+			elsif x[0] == 'GE2'
+				if x[1] == "1"
+					@game.stocks.find_by(company_name:'Monsanto').delete
+					current_player.owned_stocks.find_by(company_name:'Monsanto').delete
+					st_mkt =[]
+					my_st=[]
+				end
+			end		
+
+			st_mkt.each do |st|
+				st.update!(price:st.price*percentage)	
+				st_mkt_price <<[st.id,st.price]
+			end
+			my_st.each do|st|
+				st.update!(price:st.price*percentage)
+				my_st_price <<[st.id,st.price]
+			end
+		end
+		st_mkt_price.uniq!
+		my_st_price.uniq!
+		render json: {st_mkt:st_mkt_price, my_st:my_st_price}
 	end
 end
 
