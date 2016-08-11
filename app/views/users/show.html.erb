@@ -1,16 +1,40 @@
 <%= link_to "Home", root_path %>
 
-<%= avatar_for(current_user, size: 200) %>
-	<% if @user.username %>
-		<h1><%= @user.username %></h1>
-	<% end %>
-<h2>Total In Game Currency:
-	<% if @user.IGC_total %>
-		$<%= @user.IGC_total %>
-	<% else %>
-		$0
-	<% end %></h2>
+<br><br>
+<div class="col-sm-4">
+</div>
 
-	<% if @user.id == current_user.id%>
-      <a href='/users/<%=@user.id%>/edit'>Edit</a><br>
-  <% end %>
+<div class="col-sm-4">
+	<div class="container-fluid well span4">
+		<div class="row-fluid">
+    	<div>
+  			<%= avatar_for(current_user, size: 200) %>
+      </div>
+          
+      <div class="span8">
+        <h3><%= @user.username %></h3>
+        <h6>Total In Game Currency:
+  				<% if @user.IGC_total %>
+  					$<%= @user.IGC_total %>
+  				<% else %>
+  					$0
+  				<% end %>
+  			</h6>
+      </div>
+          
+      <div class="span2">
+        <div class="btn-group">
+  				<% if @user.id == current_user.id%>
+          	<a class="btn dropdown-toggle btn-info" href="/users/<%=@user.id%>/edit">
+          	Edit
+            	<span class="icon-cog icon-white"></span>
+          	</a>
+  			  <% end %>
+         </div>
+      </div>
+    </div>
+	</div>
+</div>
+
+<div class="col-sm-4">
+</div>
