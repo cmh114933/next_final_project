@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(version: 20160809023934) do
   create_table "owned_stocks", force: :cascade do |t|
     t.integer  "player_id"
     t.string   "company_name"
-    t.integer  "price"
+    t.float    "price"
     t.integer  "quantity"
     t.string   "s_type"
     t.datetime "created_at",   null: false
@@ -106,7 +106,7 @@ ActiveRecord::Schema.define(version: 20160809023934) do
   create_table "stocks", force: :cascade do |t|
     t.integer  "game_id"
     t.string   "company_name"
-    t.integer  "price"
+    t.float    "price"
     t.integer  "quantity"
     t.string   "s_type"
     t.datetime "created_at",   null: false

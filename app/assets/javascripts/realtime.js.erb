@@ -52,7 +52,20 @@ $(document).ready(function(){
 		type: 'POST',
 		url : '/stock_price_change',
 		success: function(data){
+
+			var msg = ""
 			
+			$.each(data.st_mkt,function(index,value){
+				msg = msg + "/"+ String(value[0]) + "/" + String(value[1])
+			})
+
+			// $.each(data.my_st,function(index,value){
+			// 	msg = msg + String(value[0]) + "/" + String(value[1])
+			// })
+				pubnub.publish({
+					channel : 'games/' + gon.game_id + '/game_logic',
+					message : "stock_price" + msg
+				})
 		}
 	})}
 
@@ -73,7 +86,7 @@ $(document).ready(function(){
 				$('#modal_stock_ev').modal('hide')
 				pubnub.publish({
 				   	channel : 'games/' + gon.game_id + '/game_logic',
-				   	message : "stock_update/" + data.s_id +'/' +data.s_quantity
+				   	message : "stock_update/" + data.s_id +'/' +data.s_quantity +'/' + data.player+ '/' + data.player_igc
 				})
 
 
@@ -90,7 +103,7 @@ $(document).ready(function(){
 				$('#modal_stock_ev').modal('hide')
 				pubnub.publish({
 				   	channel : 'games/' + gon.game_id + '/game_logic',
-				   	message : "stock_update/" + data.s_id +'/' +data.s_quantity
+				   	message : "stock_update/" + data.s_id +'/' +data.s_quantity +'/' + data.player+ '/' + data.player_igc
 				})
 
 
@@ -141,17 +154,23 @@ $(document).ready(function(){
 			type: 'POST',
 			url: "/dice",
 			success: function(data){
-				debugger
+
 				$.ajax({
 					type: 'POST',
 					url: "/event_check",
 					success: function(data){
-						debugger
+
 						event_trigger(data.e_series)
 						var e_id = (data.e_type.split(" "))
+						stock_price_change()
 
 						$('.modal-body p').text(data.event)
 						$.each(e_id,function(index,value){
+							if(value === "stock_ev"){
+								$('.transact').removeAttr('disabled')
+							}
+
+
 							$('#modal_'+value).modal('show')
 						})
 
@@ -208,6 +227,18 @@ $(document).ready(function(){
 	    	}
 	    	else if(message.split("/")[0] === 'stock_update'){
 	    		$('#stock_'+ message.split("/")[1]+ ' #s_quantity').text(message.split("/")[2])
+	    		$('.igc_'+message.split("/")[3]+' span').text(message.split("/")[4])
+	    	}
+	    	else if(message.split("/")[0] === 'stock_price'){
+	    		array = message.split("/")
+	    		array.splice(0,1)
+	    		
+	 			for ( var i = 0; i < array.length; i+=2 ) {
+	 				debugger
+					$('#stock_'+ array[i]+ ' #s_price').text(array[i + 1])
+
+				}
+	
 	    	}
 		}
 	})

@@ -164,16 +164,21 @@
     Company Name: <%=s.company_name%> 
     Price: <span id= "s_price"><%=s.price%></span>   
     Quantitiy: <span id = "s_quantity"><%=s.quantity%></span>
-    <% if s.company_name != "Apple" && s.company_name !="Mc Donalds" %>
+    <% if s.company_name == "Apple" || s.company_name =="Mc Donalds" %>
+    <button class='transact' disabled>Transact</button>
+    <%else%>
     <button class='transact'>Transact</button>
     <%end%>
-    <%= content_tag(:div, nil, :id=> ('s_id'), data:{s_id: s.id}) %>
+    <%= content_tag(:div, nil, :id=> ('s_id'),data:{s_id: s.id}) %>
   </div>
  
 
 <%end%>
 <br>
 
+<%@game.players.each do |p|%>
+  <div class='igc_<%="#{p.id}"%>'><%=p.user.email%> : <span id = "player_igc"><%=p.igc_game%></span></div>
+<%end%>
 
 <div class="modal fade" id="modal_news_ev" role="dialog">
     <div class="modal-dialog">
@@ -286,7 +291,7 @@
   </div>
 
 
-          <div class="modal fade" id="modal_evaluation_ev" role="dialog">
+  <div class="modal fade" id="modal_evaluation_ev" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
